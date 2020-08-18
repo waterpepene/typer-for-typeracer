@@ -1,31 +1,23 @@
 import pytesseract as pt
 from functions import *
-import PySimpleGUI as sg
 from GUI import *
 from sys import exit
 from os import remove
 
-pt.pytesseract.tesseract_cmd = r'E:\Tesseract\tesseract.exe'        # path to tesseract executable
+tesseract_path = r'E:\Tesseract\tesseract.exe'       # change this to your own path
+pt.pytesseract.tesseract_cmd = tesseract_path        # path to tesseract executable
 
 
 while True:
     event, values = trWin.read()
 
-    if event in (None, "kot"):
-        if kot1or0 == 1:
-            kot1or0 = 0
-            trWin.TKroot.wm_attributes("-topmost", kot1or0)
-        elif kot1or0 == 0:
-            kot1or0 = 1
-            trWin.TKroot.wm_attributes("-topmost", kot1or0)
-
-    if event in (None, 'Exit'):  # if user closes window
+    if event in (None, 'Exit'):
         exit()
 
     if event in (None, "start"):
         trWin["status"].update("Started")
         trWin.Refresh()
-
+                                                # trWin["status"] is the status label
         trWin["status"].update("Take snip.")
         trWin.Refresh()
 
@@ -39,21 +31,22 @@ while True:
         trWin.Refresh()
 
         try:
-            cortext = correct(text)
-            print(cortext + "text")
+            cortext = correctText(text)
+            print(cortext)
             trWin["status"].update("Done! Press shift to write it!")
             trWin.Refresh()
 
             write(cortext)
 
             trWin["status"].update("Status")
-            trWin.Refresh()
             remove("image.png")
+            trWin.Refresh()
+            print("_"*60)
 
         except IndexError:
             trWin["status"].update("No text recognized!")
             trWin.Refresh()
-            time.sleep(4)
+            sleep(3)
             trWin["status"].update("Status")
             trWin.Refresh()
             remove("image.png")

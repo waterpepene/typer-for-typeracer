@@ -1,7 +1,8 @@
 import keyboard as kb
-import time
+from time import sleep
 
-letters = "qwertyuiopasdfghjklzxcvbnm"
+interval = 0.04    # time waited between the input of letters
+
 
 def write(text):
     waiting = True
@@ -10,52 +11,28 @@ def write(text):
             waiting = False                     # function to write down text given to the text parameter
             for word in text:
                 kb.write(word)
-                time.sleep(0.08)
+                sleep(interval)
 
 
-def correct(giventext):
-    replace = ["{", "|", "\n", "1", "’", "‘", "Nou", "Ata", "“"]
+def correctText(given_text):           # this function corrects mistakes from the image to text conversion
+    replace = {"{": "T", "|": "I", "’": "'", "‘": "'", "Nou": "You", "Ata": "At a", "“": "\""}
     strip = ["[", "\\", ">", "‘", "’", "(", "|"]
-    text = giventext
+    letters = "qwertyuiopasdfghjklzxcvbnm"
 
-    if replace[2] in text:
-        lastix = text.index(replace[2]) - 1
-        for letter in letters:                                                   # this function corrects mistakes
-            if text[lastix] in letter:
+    if "\n" in given_text:
+        lastix = given_text.index("\n") - 1
+        for letter in letters:
+            if given_text[lastix] in letter:
                 pass
             else:
-                text = text.replace(replace[2] + replace[2], replace[2])
-                text = text.replace(replace[2], " ")
+                given_text = given_text.replace("\n" + "\n", "\n").replace("\n", " ")
 
     for char in strip:
-        if char in text[0]:
-            text = text.strip(char)
+        if char in given_text[0]:
+            given_text = given_text.strip(char)
 
-    if replace[0] in text:
-        text = text.replace(replace[0], "T")
+    for symbol in replace:
+        if symbol in given_text:
+            given_text = given_text.replace(symbol, replace[symbol])
 
-    if replace[1] in text:
-        text = text.replace(replace[1], "I")
-
-    if text[0] == replace[3] in text:
-        text = text.replace(replace[3], "I")
-
-    if text[0] == replace[3]:
-        text = text.replace(replace[3], "I")
-
-    elif replace[4] in text:
-        text = text.replace(replace[4], "'")
-
-    if replace[5] in text:
-        text = text.replace(replace[5], "'")
-
-    if replace[6] in text:
-        text = text.replace(replace[6], "You")
-
-    if replace[7] in text:
-        text = text.replace(replace[7], "At a")
-
-    if replace[8] in text:
-        text = text.replace(replace[8], "\"")
-
-    return text
+    return given_text
