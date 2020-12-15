@@ -1,38 +1,54 @@
 import keyboard as kb
 from time import sleep
+from GUI import *
+from os import remove
+import pytesseract as pt
+import threading as t
 
-interval = 0.04    # time waited between the input of letters
+interval = 0.02  # time waited between the input of letters
 
 
 def write(text):
-    waiting = True
-    while waiting:
+    trWin["status"].update("Done! Press shift to write it!\n"
+                           "Right CTRL to cancel.")
+    trWin.Refresh()
+
+    while "waiting":
         if kb.is_pressed("shift"):
-            waiting = False                     # function to write down text given to the text parameter
-            for word in text:
-                kb.write(word)
-                sleep(interval)
+            [kb.write(word, delay=interval) for word in text]
+            trWin["status"].update("Status")
+            trWin["multiline"].update("Your transformed text will be here")
+            trWin.Refresh()
+            break
+
+        elif kb.is_pressed("right ctrl"):
+            trWin["status"].update("Status")
+            trWin["multiline"].update("Your transformed text will be here")
+            trWin.Refresh()
+            break
 
 
-def correctText(given_text):           # this function corrects mistakes from the image to text conversion
-    replace = {"{": "T", "|": "I", "’": "'", "‘": "'", "Nou": "You", "Ata": "At a", "“": "\""}
-    strip = ["[", "\\", ">", "‘", "’", "(", "|"]
-    letters = "qwertyuiopasdfghjklzxcvbnm"
+def start():
+    trWin.Hide()
 
-    if "\n" in given_text:
-        lastix = given_text.index("\n") - 1
-        for letter in letters:
-            if given_text[lastix] in letter:
-                pass
-            else:
-                given_text = given_text.replace("\n" + "\n", "\n").replace("\n", " ")
+    takeSnip()
+    trWin.UnHide()
 
-    for char in strip:
-        if char in given_text[0]:
-            given_text = given_text.strip(char)
+    text = pt.pytesseract.image_to_string("image.png")
+    trWin["multiline"].update(text)
+    print(text)
 
-    for symbol in replace:
-        if symbol in given_text:
-            given_text = given_text.replace(symbol, replace[symbol])
+    try:
+        t.Thread(target=write, args=(text,), daemon=True).start()
+        print("_" * 60)
 
-    return given_text
+    except IndexError:
+        trWin["status"].update("No text recognized!")
+        trWin.Refresh()
+
+        sleep(3)
+
+        trWin["status"].update("Status")
+        trWin.Refresh()
+
+    remove("image.png")

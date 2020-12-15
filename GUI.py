@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from sys import argv
+from sys import argv, exit
 from PyQt5 import QtWidgets, QtCore, QtGui
 import tkinter as tk
 from PIL import ImageGrab
@@ -7,28 +7,25 @@ from b64_images import *
 
 sg.theme('DarkBlue16')  # theme
 
+win = [  # creating the window layout
+      [sg.Text("Press the button to start!", font="dubai 18", justification="center")],
 
-titlebar = [[sg.Button("", image_data=b64_img,                   # exit button
-                       button_color=(sg.theme_background_color(), sg.theme_background_color()),
-                       border_width=0, key='Exit', tooltip="Exit the program")]]
+      [sg.Button("", image_data=continue_b64, pad=(0, 15), border_width=0, key="start",
+               button_color=(sg.theme_background_color(), sg.theme_background_color()),)],
 
+      [sg.Multiline(default_text='Your transformed text will be here', enable_events=True, key="multiline",
+                  size=(50, 3), border_width=0, font="dubai 13")],
 
-win = [[sg.Column(titlebar, justification="r")],                # creating the window layout
-       [sg.Text("Press the button to start!", font="rockwell 20", justification="center")],
-       [sg.Button("Start!", font="dubai 20", border_width=0, tooltip="Start", size=(9, 1), pad=(0,50), key="start")],
-       [sg.Text("Status", font="dubai 20", key="status", size=(25, 1), justification="c", enable_events=True)]]
+      [sg.Text("Status", font="dubai 18", key="status", size=(25, 2), justification="c", enable_events=True)]]
 
-
-trWin = sg.Window("", win,
+trWin = sg.Window("Image to text", win,
                   keep_on_top=True,
-                  no_titlebar=True,
-                  size=(450, 300),              # creating the window
-                  alpha_channel=0.7,
-                  grab_anywhere=True,
+                  size=(450, 315),  # creating the window
+                  alpha_channel=0.9,
                   element_justification="c")
 
 
-class MyWidget(QtWidgets.QWidget):                              # snipping tool
+class MyWidget(QtWidgets.QWidget):  # snipping tool
     def __init__(self):
         super().__init__()
         root = tk.Tk("asdas")
@@ -41,7 +38,6 @@ class MyWidget(QtWidgets.QWidget):                              # snipping tool
         QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
-        print('Take a snip')
         self.show()
         root.destroy()
 
@@ -75,6 +71,5 @@ class MyWidget(QtWidgets.QWidget):                              # snipping tool
 def takeSnip():
     app = QtWidgets.QApplication(argv)
     window = MyWidget()
-    window.show()                               # function to start the snipping tool
+    window.show()  # function to start the snipping tool
     app.exec_()
-
