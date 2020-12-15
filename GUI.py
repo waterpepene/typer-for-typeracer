@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from sys import argv
+from sys import argv, exit
 from PyQt5 import QtWidgets, QtCore, QtGui
 import tkinter as tk
 from PIL import ImageGrab

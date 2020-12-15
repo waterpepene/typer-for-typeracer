@@ -1,7 +1,6 @@
 import pytesseract as pt
 from functions import *
 from GUI import *
-from sys import exit
 from os import remove
 
 tesseract_path = r'E:\Tesseract\tesseract.exe'       # change this to your own path
